@@ -1,0 +1,13 @@
+cargo new project   --vcs      #escape git
+cargo run                      # compiles project
+cargo clean                    #clean generated files 
+
+# The isize and usize types hold pointer-sized signed and unsigned integers, 32 bits long on 32-bit
+  platforms, and 64 bits long on 64-bit platforms
+# mut makes the variable assignable 
+# The ! character marks this as a macro invocation, not a function call.
+# Rust only infers types within function bodies: you must write out the types of function parameters 
+  and return values,
+  
+# Attributes are an open-ended system for marking functions and other declarations with extra information, like
+# attributes in C++ and C#, or annotations in Java. They’re used to control compiler warnings and code style checks
