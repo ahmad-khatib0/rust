@@ -1,0 +1,42 @@
+
+# cargo clippy
+runs the clippy syntax checker 
+
+Making Clippy Pedantic
+  If you don’t feel that Clippy is complaining enough, you can configure Clippy
+  to be even more strict in its analysis. As the first line of your main.rs file, add:
+  
+  #![warn(clippy::all, clippy::pedantic)]
+
+
+# cargo search bracket-terminal
+  search the crates (packages ) registry 
+
+• =0.8.0 will only use version 0.8.0 - nothing lower or higher.
+
+• ^0.8.0 will use any version equal to or greater than 0.8.0, but only within the 0.x version range.
+
+• ~0.8.0 will use any minor version greater than 0.8.0 . Updates will automat-
+  ically be applied, even if they break the crate’s API.
+
+A few different options are available; you can specify a version to download
+  from crates.io, a Git repository address, or even a local path for a crate stored
+  on your computer.16 For example, if you wanted to use the GitHub version of
+  bracket-lib, you could specify it as follows:
+[dependencies]
+bracket-lib = { git = "https://github.com/thebracket/bracket-lib" }
+
+Crates can also provide feature flags. This allows a crate to offer optional
+  functionality. For example, bracket-lib can be configured to use Amethyst as its
+  back end, rather than OpenGL. You would specify this as follows:
+
+[dependencies]
+bracket-lib = {
+git = "https://github.com/thebracket/bracket-lib",
+  default-features = false,
+  features = [ "amethyst_engine_vulkan" ]
+}
+
+
+
+
