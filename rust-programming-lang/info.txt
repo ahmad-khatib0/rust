@@ -54,7 +54,6 @@
   emoji; and zero-width spaces are all valid char values in Rust. Unicode scalar values range from U+0000
   to U+D7FF and U+E000 to U+10FFFF inclusive. However, a “character” isn’t really a concept in Unicode,
   so your human intuition for what a “character” is may not match up with what a char is in Rust.
-
-
+  
 
 
