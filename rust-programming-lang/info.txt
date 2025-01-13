@@ -58,4 +58,25 @@
 - You can put any kind of data inside an enum variant: strings, numeric types, or structs, 
   for example. You can even include another enum! 
 
+- We discuss strings in the context of collections because strings are implemented as a collection of
+  bytes, plus some methods to provide useful functionality when those bytes are interpreted as text.
+
+- Many of the same operations available with Vec<T> are available with String as well because String is
+  actually implemented as a wrapper around a vector of bytes with some extra guarantees, restrictions,
+  and capabilities. An example of a function that works the same way with Vec<T> and String is the 
+  new function to create an instance, 
+
+- Another point about UTF-8 is that there are actually three relevant ways to look at strings from 
+  Rust’s perspective: as bytes, scalar values, and grapheme clusters (the closest thing to what we 
+  would call letters).
+
+- Indexing into a string is often a bad idea because it’s not clear what the return type of the 
+  string-indexing operation should be: a byte value, a character, a grapheme cluster, or a string slice.
+
+- The best way to operate on pieces of strings is to be explicit about whether you want characters 
+  or bytes. For individual Unicode scalar values, use the chars method.
+
+
+
+
 
