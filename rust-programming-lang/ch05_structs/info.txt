@@ -1,0 +1,35 @@
+- Rust also supports structs that look similar to tuples, called tuple structs. Tuple structs have the 
+  added meaning the struct name provides but don’t have names associated with their fields; rather,
+  they just have the types of the fields. Tuple structs are useful when you want to give the whole tuple
+  a name and make the tuple a different type from other tuples, and when naming each field as in a
+  regular struct would be verbose or redundant.
+
+- Unit-Like Structs Without Any Fields
+  You can also define structs that don’t have any fields! These are called unit-like structs because 
+  they behave similarly to (), Unit-like structs can be useful when you need to implement a trait on 
+  some type but don’t have any data that you want to store in the type itself.
+
+- WHERE’S THE -> OPERATOR?
+  In C and C++, two different operators are used for calling methods: you use . if you’re calling a 
+  method on the object directly and -> if you’re calling the method on a pointer to the object and need
+  to dereference the pointer first. In other words, if object is a pointer, object->something() is 
+  similar to (*object).something().
+  Rust doesn’t have an equivalent to the -> operator; instead, Rust has a feature called automatic 
+  referencing and dereferencing. Calling methods is one of the few places in Rust that has this behavior.
+  Here’s how it works: when you call a method with object.something(), Rust automatically adds in &, 
+  &mut, or * so object matches the signature of the method. In other words, the following are the same:
+    p1.distance(&p2);
+    (&p1).distance(&p2);
+  The first one looks much cleaner. This automatic referencing behavior works because methods have a 
+  clear receiver—the type of self. Given the receiver and name of a method, Rust can figure out 
+  definitively whether the method is reading (&self), mutating (&mut self), or consuming (self). 
+  The fact that Rust makes borrowing implicit for method receivers is a big part of making
+  ownership ergonomic in practice.
+
+- All functions defined within an impl block are called associated functions because they’re associated 
+  with the type named after the impl. We can define associated functions that don’t have self as their
+  first parameter (and thus are not methods) because they don’t need an instance of the type to work with.
+  We’ve already used one function like this: the String::from function that’s defined on the String type.
+  Associated functions that aren’t methods are often used for constructors that will return a new instance
+  of the struct. These are often called new, but new isn’t a special name and isn’t built into the language.
+
