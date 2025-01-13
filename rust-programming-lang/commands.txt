@@ -1,10 +1,11 @@
 
 $ cargo new project   --vcs      # escape git
 $ cargo new project_name
+$ cargo new restaurant --lib     # crate 
 $ cargo build 
 $ cargo run 
 $ cargo check
-$ cargo clean                    #clean generated files 
+$ cargo clean                    # clean generated files 
 
 $ cargo build --release 
   to compile it with optimizations. This command will create an executable in target/release instead 
