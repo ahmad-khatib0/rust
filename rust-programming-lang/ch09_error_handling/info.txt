@@ -1,0 +1,31 @@
+- In C, attempting to read beyond the end of a data structure is undefined behavior. You might get whatever
+  is at the location in memory that would correspond to that element in the data structure, even though 
+  the memory doesn’t belong to that structure. This is called a buffer overread and can lead to security 
+  vulnerabilities if an attacker is able to manipulate the index in such a way as to read data they 
+  shouldn’t be allowed to that is stored after the data structure.
+
+- There is a difference between what the match expression does and what the ? operator does: error values
+  that have the ? operator called on them go through the from function, defined in the From trait in the
+  standard library, which is used to convert values from one type into another. When the ? operator calls
+  the from function, the error type received is converted into the error type defined in the return type
+  of the current function. This is useful when a function returns one error type to represent all the 
+  ways a function might fail, even if parts might fail for many different reasons.
+
+- The main function may return any types that implement the std::process::Termination trait, which 
+  contains a function report that returns an ExitCode. Consult the standard library documentation for
+  more information on implementing the Termination trait for your own types.
+
+- When your code performs an operation that could put a user at risk if it’s called using invalid
+  values, your code should verify the values are valid first and panic if the values aren’t valid.
+  This is mostly for safety reasons: attempting to operate on invalid data can expose your code
+  to vulnerabilities. This is the main reason the standard library will call panic! if you attempt
+  an out-of-bounds memory access: trying to access memory that doesn’t belong to the current 
+  data structure is a common security problem. Functions often have contracts: their behavior 
+  is only guaranteed if the inputs meet particular requirements. Panicking when the contract is
+  violated makes sense because a contract violation always indicates a caller-side bug, and it’s
+  not a kind of error you want the calling code to have to explicitly handle. In fact, there’s
+  no reasonable way for calling code to recover; the calling programmers need to fix the code
+
+
+
+
