@@ -23,5 +23,21 @@ $ cargo doc --open
 
 $ env RUST_BACKTRACE=1 
 
+# If you don’t want to run the tests in parallel
+$ cargo test -- --test-threads=1
+
+# Showing Function Output (like println)
+$ cargo test -- --show-output
+
+# run only one test 
+$ cargo test this_test_will_pass       
+
+# ran all tests with add in the name: 
+$ cargo test add 
+
+$ cargo test -- --ignored
+$ cargo test -- --include-ignored
+
+
 
 
