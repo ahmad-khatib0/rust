@@ -38,6 +38,8 @@ $ cargo test add
 $ cargo test -- --ignored
 $ cargo test -- --include-ignored
 
+# run a particular integration test function
+$ cargo test --test integration_test
 
 
 
