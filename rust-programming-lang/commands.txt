@@ -1,3 +1,9 @@
+$ rustup install <version>
+$ rustup default <version>
+# switch between different Rust versions for a specific project
+$ rustup override set <version>
+$ rustup update
+$ rustup self uninstall
 
 $ cargo new project   --vcs      # escape git
 $ cargo new project_name
@@ -49,4 +55,14 @@ $ cargo yank --vers 1.0.1
 # you can also undo a yank and allow projects to start depending on a version again
 $ cargo yank --vers 1.0.1 --undo
 
+# specify which package in the workspace we want to run
+$ cargo run -p adder  
+
+# run tests for one particular crate in a workspace
+$ cargo test -p add_one
+
+# If you publish the crates in the workspace to https://crates.io, each crate in the workspace will 
+  need to be published separately. Like cargo test, we can publish a particular crate in our workspace
+  by using the -p flag and specifying the name of the crate we want to publish.
+$ cargo publish -p adder
 

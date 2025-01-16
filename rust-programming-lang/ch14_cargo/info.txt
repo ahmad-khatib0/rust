@@ -51,4 +51,11 @@
       Unyank guessing_game@1.0.1
   A yank does not delete any code. It cannot, for example, delete accidentally uploaded secrets. 
   If that happens, you must reset those secrets immediately.
+  
+- Depending on an External Package in a Workspace
+  Notice that the workspace has only one Cargo.lock file at the top level, rather than having a Cargo.lock
+  in each crate’s directory. This ensures that all crates are using the same version of all dependencies.
+  If we add the rand package to the adder/Cargo.toml and add_one/Cargo.toml files, Cargo will resolve both
+  of those to one version of rand and record that in the one Cargo.lock. Making all crates in the workspace
+  use the same dependencies means the crates will always be compatible with each other. 
 
