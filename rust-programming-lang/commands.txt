@@ -41,5 +41,12 @@ $ cargo test -- --include-ignored
 # run a particular integration test function
 $ cargo test --test integration_test
 
+$ cargo publish
+
+# Deprecating Versions from Crates.io with cargo yank
+$ cargo yank --vers 1.0.1
+
+# you can also undo a yank and allow projects to start depending on a version again
+$ cargo yank --vers 1.0.1 --undo
 
 

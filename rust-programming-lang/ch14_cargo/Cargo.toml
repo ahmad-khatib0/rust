@@ -1,0 +1,16 @@
+[package]
+name = "ch14_cargo"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+# license = "MIT OR Apache-2.0" # dual license
+
+## controls the number of optimizations Rust will apply to your code, with a range of 0 to 3.
+# https://doc.rust-lang.org/cargo/reference/profiles.html
+[profile.dev]
+opt-level = 0
+
+[profile.release] 
+opt-level = 3
+
+[dependencies]
