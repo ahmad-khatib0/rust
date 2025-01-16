@@ -1,0 +1,61 @@
+- We’ll cover:
+. Closures, a function-like construct you can store in a variable
+. Iterators, a way of processing a series of elements
+. How to use closures and iterators to improve the I/O project in Chapter 12
+. The performance of closures and iterators (spoiler alert: they’re faster than you might think!)
+
+- Closures: Anonymous Functions That Capture Their Environment
+  Rust’s closures are anonymous functions you can save in a variable or pass as arguments to other functions.
+  You can create the closure in one place and then call the closure elsewhere to evaluate it in a different
+  context. Unlike functions, closures can capture values from the scope in which they’re defined.
+
+- Capturing References or Moving Ownership
+  Closures can capture values from their environment in three ways, which directly map to the three ways
+  a function can take a parameter: borrowing immutably, borrowing mutably, and taking ownership. The closure
+  will decide which of these to use based on what the body of the function does with the captured values.
+
+- A closure body can do any of the following: move a captured value out of the closure, mutate the captured
+  value, neither move nor mutate the value, or capture nothing from the environment to begin with.
+  The way a closure captures and handles values from the environment affects which traits the closure 
+  implements, and traits are how functions and structs can specify what kinds of closures they can use. 
+  Closures will automatically implement one, two, or all three of these Fn traits, in an additive fashion,
+  depending on how the closure’s body handles the values:
+  . FnOnce applies to closures that can be called once. All closures implement at least this trait because
+    all closures can be called. A closure that moves captured values out of its body will only implement 
+    FnOnce and none of the other Fn traits because it can only be called once.
+  . FnMut applies to closures that don’t move captured values out of their body, but that might mutate 
+    the captured values. These closures can be called more than once.
+  . Fn applies to closures that don’t move captured values out of their body and that don’t mutate captured
+    values, as well as closures that capture nothing from their environment. These closures can be called 
+    more than once without mutating their environment, which is important in cases such as calling a 
+    closure multiple times concurrently.
+  
+- Methods that call next are called consuming adapters because calling them uses up the iterator. 
+  One example is the sum method, which takes ownership of the iterator and iterates through the items
+  by repeatedly calling next, thus consuming the iterator. As it iterates through, it adds each item 
+  to a running total and returns the total when iteration is complete.
+
+- Methods That Produce Other Iterators
+  Iterator adapters are methods defined on the Iterator trait that don’t consume the iterator. 
+  Instead, they produce different iterators by changing some aspect of the original iterator.
+
+- Comparing Performance: Loops vs. Iterators
+  To determine whether to use loops or iterators, you need to know which implementation is faster: 
+  the version of the search function with an explicit for loop or the version with iterators. We ran 
+  a benchmark by loading the entire contents of The Adventures of Sherlock Holmes by Sir Arthur Conan 
+  Doyle into a String and looking for the word the in the contents. Here are the results of the 
+  benchmark on the version of search using the for loop and the version using iterators:
+    test bench_search_for  ... bench: 19,620,300 ns/iter (+/- 915,700)
+    test bench_search_iter ... bench: 19,234,900 ns/iter (+/- 657,200)
+  The iterator version was slightly faster!. 
+  For a more comprehensive benchmark, you should check using various texts of various sizes as the 
+  contents, different words and words of different lengths as the query, and all kinds of other variations.
+  The point is this: iterators, although a high-level abstraction, get compiled down to roughly the same 
+  code as if you’d written the lower-level code yourself. Iterators are one of Rust’s zero- cost abstractions,
+  by which we mean that using the abstraction imposes no additional runtime overhead. This is analogous to
+  how Bjarne Stroustrup, the original designer and implementor of C++, defines zero-overhead 
+  in “Foundations of C++” (2012):
+    In general, C++ implementations obey the zero-overhead principle: What you
+    don’t use, you don’t pay for. And further: What you do use, you couldn’t hand code any better.
+  
+  
