@@ -1,0 +1,156 @@
+
+- Smart pointers are usually implemented using structs. Unlike an ordinary struct, smart pointers implement
+  the Deref and Drop traits. The Deref trait allows an instance of the smart pointer struct to behave like
+  a reference so you can write your code to work with either references or smart pointers. The Drop trait 
+  allows you to customize the code that’s run when an instance of the smart pointer goes out of scope.
+
+- the most common smart pointers in the standard library:
+    . Box<T>, for allocating values on the heap
+    . Rc<T>, a reference counting type that enables multiple ownership
+    . Ref<T> and RefMut<T>, accessed through RefCell<T>, a type that enforces the 
+      borrowing rules at runtime instead of compile time
+
+- Boxes don’t have performance overhead, other than storing their data on the heap instead of on the stack.
+  But they don’t have many extra capabilities either. You’ll use them most often in these situations:
+  . When you have a type whose size can’t be known at compile time
+    and you want to use a value of that type in a context that requires an exact size
+  . When you have a large amount of data and you want to transfer ownership but ensure the 
+    data won’t be copied when you do so
+  . When you want to own a value and you care only that it’s a type that implements a particular
+    trait rather than being of a specific type
+
+- Enabling Recursive Types with Boxes
+  A value of a recursive type can have another value of the same type as part of itself. Recursive types
+  pose an issue because, at compile time, Rust needs to know how much space a type takes up. However,
+  the nesting of values of recursive types could theoretically continue infinitely, so Rust can’t know
+  how much space the value needs. Because boxes have a known size, we can enable recursive types by
+  inserting a box in the recursive type definition.
+
+- More Information About the Cons List
+  A cons list is a data structure that comes from the Lisp programming language and its dialects, is 
+  made up of nested pairs, and is the Lisp version of a linked list. Its name comes from the cons 
+  function (short for construct function) in Lisp that constructs a new pair from its two arguments. 
+  By calling cons on a pair consisting of a value and another pair, we can construct cons lists made
+  up of recursive pairs.
+  For example, here’s a pseudocode representation of a cons list containing the list 1, 2, 3 with
+  each pair in parentheses: (1, (2, (3, Nil)))
+  Each item in a cons list contains two elements: the value of the current item and the next item. 
+  The last item in the list contains only a value called Nil without a next item. A cons list is 
+  produced by recursively calling the cons function. The canonical name to denote the base case of the
+  recursion is Nil. Note that this is not the same as the “null” or “nil” concept, which is an invalid
+  or absent value.
+
+- Boxes provide only the indirection and heap allocation; they don’t have any other special capabilities,
+  like those we’ll see with the other smart pointer types. They also don’t have the performance overhead
+  that these special capabilities incur, so they can be useful in cases like the cons list where the 
+  indirection is the only feature we need.
+
+- Implicit Deref Coercions with Functions and Methods
+  Deref coercion converts a reference to a type that implements the Deref trait into a reference to 
+  another type. For example, deref coercion can convert &String to &str because String implements the
+  Deref trait such that it returns &str. Deref coercion is a convenience Rust performs on arguments to 
+  functions and methods, and works only on types that implement the Deref trait. It happens automatically
+  when we pass a reference to a particular type’s value as an argument to a function or method that doesn’t
+  match the parameter type in the function or method definition. A sequence of calls to the deref method 
+  converts the type we provided into the type the parameter needs.
+
+- When the Deref trait is defined for the types involved, Rust will analyze the types and use 
+  Deref::deref as many times as necessary to get a reference to match the parameter’s type. The
+  number of times that Deref::deref needs to be inserted is resolved at compile time, so there 
+  is no runtime penalty for taking advantage of deref coercion!
+
+- How Deref Coercion Interacts with Mutability
+  Similar to how you use the Deref trait to override the * operator on immutable references, you can use
+  the DerefMut trait to override the * operator on mutable references. Rust does deref coercion when 
+  it finds types and trait implementations in three cases:
+    . 1. From &T to &U when T: Deref<Target=U>
+    . 2. From &mut T to &mut U when T: DerefMut<Target=U>
+    . 3. From &mut T to &U when T: Deref<Target=U>
+  The first two cases are the same except that the second implements mutability. The first case states 
+  that if you have a &T, and T implements Deref to some type U, you can get a &U transparently. The second
+  case states that the same deref coercion happens for mutable references. The third case is trickier: 
+  Rust will also coerce a mutable reference to an immutable one. But the reverse is not possible: immutable
+  references will never coerce to mutable references. Because of the borrowing rules, if you have a mutable
+  reference, that mutable reference must be the only reference to that data (otherwise, the program wouldn’t
+  compile). Converting one mutable reference to one immutable reference will never break the borrowing rules.
+  Converting an immutable reference to a mutable reference would require that the initial immutable reference
+  is the only immutable reference to that data, but the borrowing rules don’t guarantee that. Therefore, 
+  Rust can’t make the assumption that converting an immutable reference to a mutable reference is possible.
+
+- Unfortunately, it’s not straightforward to disable the automatic drop functionality. Disabling drop isn’t
+  usually necessary; the whole point of the Drop trait is that it’s taken care of automatically. Occasionally,
+  however, you might want to clean up a value early. One example is when using smart pointers that manage 
+  locks: you might want to force the drop method that releases the lock so that other code in the same scope
+  can acquire the lock. Rust doesn’t let you call the Drop trait’s drop method manually; instead, you have
+  to call the std::mem::drop function provided by the standard library if you want to force a value 
+  to be dropped before the end of its scope.
+
+- You have to enable multiple ownership explicitly by using the Rust type Rc<T>, which is an abbreviation
+  for reference counting. The Rc<T> type keeps track of the number of references to a value to determine
+  whether or not the value is still in use. If there are zero references to a value, the value can be
+  cleaned up without any references becoming invalid.
+
+- We could have called a.clone() rather than Rc::clone(&a), but Rust’s convention is to use Rc::clone in
+  this case. The implementation of Rc::clone doesn’t make a deep copy of all the data like most types’
+  implementations of clone do. The call to Rc::clone only increments the reference count, which doesn’t
+  take much time. Deep copies of data can take a lot of time. By using Rc::clone for reference counting, 
+  we can visually distinguish between the deep-copy kinds of clones and the kinds of clones that increase
+  the reference count. When looking for performance problems in the code, we only need to consider the
+  deep-copy clones and can disregard calls to Rc::clone.
+
+- Interior mutability is a design pattern in Rust that allows you to mutate data even when there are 
+  immutable references to that data; normally, this action is disallowed by the borrowing rules. To 
+  mutate data, the pattern uses unsafe code inside a data structure to bend Rust’s usual rules that 
+  govern mutation and borrowing. Unsafe code indicates to the compiler that we’re checking the rules 
+  manually instead of relying on the compiler to check them for us;
+
+- With references and Box<T>, the borrowing rules’ invariants are enforced at compile time. With 
+  RefCell<T>, these invariants are enforced at runtime. With references, if you break these rules, you
+  will get a compiler error. With RefCell<T>, if you break these rules, your program will panic and exit.
+
+- Here is a recap of the reasons to choose Box<T>, Rc<T>, or RefCell<T>:
+  . Rc<T> enables multiple owners of the same data; Box<T> and RefCell<T> have single owners.
+  . Box<T> allows immutable or mutable borrows checked at compile time; Rc<T> allows only immutable
+    borrows checked at compile time; RefCell<T> allows immutable or mutable borrows checked at runtime.
+  . Because RefCell<T> allows mutable borrows checked at runtime, you can mutate the value inside 
+    the RefCell<T> even when the RefCell<T> is immutable.
+
+- There are situations in which it would be useful for a value to mutate itself in its methods but appear
+  immutable to other code. Code outside the value’s methods would not be able to mutate the value. Using 
+  RefCell<T> is one way to get the ability to have interior mutability, but RefCell<T> doesn’t get around 
+  the borrowing rules completely: the borrow checker in the compiler allows this interior mutability, and
+  the borrowing rules are checked at runtime instead. If you violate the rules, you’ll get a panic! 
+  instead of a compiler error.
+
+- Keeping Track of Borrows at Runtime with RefCell<T> When creating immutable and mutable references, 
+  we use the & and &mut syntax, respectively. With RefCell<T>, we use the borrow and borrow_mut methods,
+  which are part of the safe API that belongs to RefCell<T>. The borrow method returns the smart pointer
+  type Ref<T>, and borrow_mut returns the smart pointer type RefMut<T>. Both types implement Deref, 
+  so we can treat them like regular references.
+
+- Allowing Multiple Owners of Mutable Data with Rc<T> and RefCell<T>
+  A common way to use RefCell<T> is in combination with Rc<T>. Recall that Rc<T> lets you have multiple
+  owners of some data, but it only gives immutable access to that data. If you have an Rc<T> that holds
+  a RefCell<T>, you can get a value that can have multiple owners and that you can mutate!
+
+- Reference Cycles Can Leak Memory
+  Rust’s memory safety guarantees make it difficult, but not impossible, to accidentally create memory 
+  that is never cleaned up (known as a memory leak). Preventing memory leaks entirely is not one of Rust’s
+  guarantees, meaning memory leaks are memory safe in Rust. We can see that Rust allows memory leaks by 
+  using Rc<T> and RefCell<T>: it’s possible to create references where items refer to each other in a 
+  cycle. This creates memory leaks because the reference count of each item in the cycle will never 
+  reach 0, and the values will never be dropped.
+
+- Preventing Reference Cycles Using Weak<T>
+  So far, we’ve demonstrated that calling Rc::clone increases the strong_count of an Rc<T> instance, and
+  an Rc<T> instance is only cleaned up if its strong_count is 0. You can also create a weak reference to
+  the value within an Rc<T> instance by calling Rc::downgrade and passing a reference to the Rc<T>. 
+  Strong references are how you can share ownership of an Rc<T> instance. Weak references don’t express
+  an ownership relationship, and their count doesn’t affect when an Rc<T> instance is cleaned up. They 
+  won’t cause a reference cycle because any cycle involving some weak references will be broken once 
+  the strong reference count of values involved is 0.
+  When you call Rc::downgrade, you get a smart pointer of type Weak<T>. Instead of increasing the 
+  strong_count in the Rc<T> instance by 1, calling Rc::downgrade increases the weak_count by 1. The 
+  Rc<T> type uses weak_count to keep track of how many Weak<T> references exist, similar to strong_count.
+  The difference is the weak_count doesn’t need to be 0 for the Rc<T> instance to be cleaned up.
+
