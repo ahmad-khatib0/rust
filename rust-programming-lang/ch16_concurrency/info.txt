@@ -1,0 +1,25 @@
+- Concurrent programming, in which different parts of a program execute independently, and parallel 
+  programming, in which different parts of a program execute at the same time, are becoming 
+  increasingly important as more computers take advantage of their multiple processors.
+
+-- Some Of Concurrent programming problems:
+  . Race conditions, in which threads are accessing data or resources in an inconsistent order
+  . Deadlocks, in which two threads are waiting for each other, preventing both threads from continuing
+  . Bugs that only happen in certain situations and are hard to reproduce and fix reliably
+  
+- Programming languages implement threads in a few different ways, and many operating systems provide 
+  an API the language it can call for creating new threads. The Rust standard library uses a 1:1 model
+  of thread implementation, whereby a program uses one operating system thread per one language thread.
+  There are crates that implement other models of threading that make different tradeoffs to the 1:1 model.
+
+- The receiver has two useful methods: recv and try_recv. We’re using recv, short for receive, which 
+  will block the main thread’s execution and wait until a value is sent down the channel. Once a value
+  is sent, recv will return it in a Result<T, E>. When the transmitter closes, recv will return an error
+  to signal that no more values will be coming. The try_recv method doesn’t block, but will instead return
+  a Result<T, E> immediately: an Ok value holding a message if one is available and an Err value if there 
+  aren’t any messages this time. Using try_recv is useful if this thread has other work to do while waiting
+  for messages: we could write a loop that calls try_recv every so often, handles a message if one is 
+  available, and otherwise does other work for a little while until checking again.
+
+
+
