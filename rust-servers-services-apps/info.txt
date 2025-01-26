@@ -1,0 +1,12 @@
+
+- Popular types of distributed systems include: 
+  Distributed networks such as telecommunication networks and the internet.
+  Distributed client-server applications. (Most web-based applications fall into this category.)
+  Distributed P2P applications such as BitTorrent and Tor.
+  Real-time control systems such as air traffic and industrial control.
+  Distributed server infrastructures such as cloud, grid, and other forms of scientific computing.
+
+
+
+
+

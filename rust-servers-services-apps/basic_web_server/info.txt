@@ -1,0 +1,8 @@
+
+
+  tcpserver will be the binary project for TCP server code.
+  tcpclient will be the binary project for TCP client code.
+  httpserver will be the binary project for HTTP server code.
+  http will be the library project for HTTP protocol functionality.
+
+
