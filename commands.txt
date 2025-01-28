@@ -69,3 +69,8 @@ $ cargo test -p add_one
   by using the -p flag and specifying the name of the crate we want to publish.
 $ cargo publish -p adder
 
+# make the current dir the target of running commands
+$ export PROJECT_ROOT=.
+
+# run a file of queries
+$ psql -U $DATABASE_USER -d ezytutors < $PROJECT_ROOT/src/database.sql

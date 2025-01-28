@@ -1,0 +1,11 @@
+
+  In the first iteration, you’ll learn how to connect asynchronously to a Postgres
+   database, using a database connection pool, from a vanilla Rust program.
+  In the second iteration, we’ll set up the project structure for the Actix-based
+   web service and write unit tests.
+  In the third iteration, we’ll write the actual handler functions to create data-
+   base records and query the results.
+
+
+
+
